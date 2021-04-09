@@ -1,75 +1,33 @@
-## import required libraries
-import pyautogui as pyauto
-import pandas
-from datetime import date
-from time import sleep
+from PDFNetPython3 import PDFDoc, Optimizer, SDFDoc
+from os import path
+from glob import glob
 
-## Hi darling, I love you
+while True:  # repeat for batch processing
 
-## Condensed guide from https://pyautogui.readthedocs.io/en/latest/quickstart.html
-# Left click at (x, y)
-# pyauto.click(x, y)
-#
-# Right click at (x, y)
-# pyauto.rightClick(x, y)
-#
-# Double click at (x, y)
-# pyauto.doubleClick(x, y)
-#
-# Send keyboard text input
-# pyauto.typewrite('Hello world!')
-#
-# Send keyboard single key input
-# pyauto.press('enter')
-#
-# Send hotkey input
-# pyauto.hotkey('ctrl', 'c')
-#
-# Wait for a period of time in seconds
-# sleep(1)
+    # the base directory where PDF files will be searched
+    dir = input('Input path: ')
 
+    # check that the directory is valid
+    if not path.isdir(dir):
+        raise ValueError('The path input is not a valid path.')
 
-pyauto.PAUSE = 2.5  # Pause between ALL pyauto commands in seconds. Keep this long while prototyping and shorten later.
-pyauto.FAILSAFE = True  # Failsafe can be triggerd by moving the mouse to the upper-left.
+    # search for PDF files recursively or only in base directory
+    pdf_files = glob(path.join(dir, '**/*.pdf'), recursive=True)  # recursively
+    # pdf_files = glob(path.join(dir, "*.{}".format('pdf')))  # only in the base directory
 
-jobs_df = pandas.read_excel('job_details.xlsx', engine='openpyxl')  # read Excel sheet into a dataframe
-jobs_df = jobs_df.dropna(axis=0, how='all')  # remove rows with all NaN values
-# print(jobs_df)  # preview the dataframe
+    # check if there are PDF files
+    if not pdf_files:
+        raise ValueError(f'No PDF files were found in {dir}')
 
-current_date = date.today().strftime("%B %d, %Y")  # get the current date in text format (ex: March 23, 2021)
-# print(current_date)  # preview the date string
+    # loop through PDF file path names
+    for pdf_path in pdf_files:
+        # compress PDF file with default settins
+        doc = PDFDoc(pdf_path)
+        doc.InitSecurityHandler()
+        Optimizer.Optimize(doc)
+        doc.Save(pdf_path, SDFDoc.e_linearized)
+        doc.Close()
 
-# loop through all the jobs (rows of the dataframe)
-for index, job in jobs_df.iterrows():
-    company = job['Company']
-    industry = job['Industry']
-    position = job['Position']
+        print(f'Compressing {pdf_path}...')
 
-    pyauto.click(10, 10)  # click on the template Word cover letter in Finder to select it
-    pyauto.hotkey('ctrl', 'c')  # copy the template file
-    pyauto.hotkey('ctrl', 'v')  # paste the template file
-
-    pyauto.press('enter')  # start renaming the new file
-    pyauto.typewrite(f'Adri Regalado Cover Letter - {company} - {position}')  # rename the new file
-    pyauto.press('enter')  # stop renaming the new file
-
-    pyauto.hotkey('ctrl', 'o')  # open the new file
-    pyauto.hotkey('ctrl', 'h')  # open the find-replace dialog
-
-    pairs_to_replace = [
-        ['[DATE]', date],
-        ['[COMPANY]', company],
-        ['[INDUSTRY]', industry],
-        ['[POSITION]', position]
-    ]
-
-    for pair in pairs_to_replace:
-        text_to_replace = pair[0]
-        replacement = pair[1]
-        print(f'{text_to_replace} --> {text_to_replace}')
-
-        # pyauto.press('tab')  # navigate between UI elements
-        # pyauto.hotkey('ctrl', 'w')  # close the window
-
-
-
+    print('Completed.\n\n')

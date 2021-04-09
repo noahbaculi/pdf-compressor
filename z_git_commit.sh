@@ -1,14 +1,14 @@
-git checkout master
+git checkout main
 git status
 
-read -p "Git commit all to master? ([y]/n): " continue_input
+read -p "Git commit all to main? ([y]/n): " continue_input
 
 
 if [[ $continue_input == *"n"* ]]; then
 	echo "Not committing..."
 
 else
-	echo "Committing all to master..."
+	echo "Committing all to main..."
 	read -p "Git commit message: " commit_msg_input
 	git add .
 	git commit -m "$commit_msg_input"
