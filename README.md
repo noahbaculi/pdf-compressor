@@ -1,2 +1,2 @@
-# pdf-compressor
-Batch PDF compressor.
+# utility-scripts
+General-use utility scripts.
