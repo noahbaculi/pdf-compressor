@@ -5,9 +5,9 @@ import os
 
 # print(ii)
 
-path = r"D:\Media\_New\The Office\Season 10"  # + str(ii)  # path of the directory where the files/folders to be renamed exist
+path = r"D:\Media\_New\Parks and Recreation\Season 07"  # + str(ii)  # path of the directory where the files/folders to be renamed exist
 
-for string_to_be_replaced, replacement_string in [['.', ' '], [' mkv', '.mkv'], ['The Office S', 'The Office - S']]:
+for string_to_be_replaced, replacement_string in [['.1080p.WEB-DL.x265.10bit.AAC.5.1-ImE[UTR]', ''], ['.', ' '], [' mkv', '.mkv']]:
 # for string_to_be_replaced, replacement_string in [['.WEB-DL.x264-[MULVAcoded]', '']]:
     # string_to_be_replaced = f'.'  # this string will be replaced by the string in the next line
     # replacement_string = f' '
