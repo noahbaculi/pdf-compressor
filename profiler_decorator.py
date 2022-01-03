@@ -1,10 +1,9 @@
-from functools import wraps
-
-
-def profiler(savefile=False):
+def profiler(output_limit=None, save_file=False):
     """Decorator to profile functions"""
 
     def profiler_dec(func):
+        from functools import wraps
+
         @wraps(func)
         def wrapper(*args, **kwargs):
             import cProfile
@@ -15,18 +14,20 @@ def profiler(savefile=False):
 
             stats = pstats.Stats(prof)
             stats.sort_stats(pstats.SortKey.TIME)
-            stats.print_stats()
+            stats.print_stats(output_limit)
 
-            if savefile:
+            if save_file:
                 from datetime import datetime
-                print(f'{func.__name__} - {datetime.now():%m-%d-%Y %H:%M:%S}.profile')  # save profile file
+                prof.dump_stats(f'{func.__name__} - {datetime.now():%m-%d-%Y %H:%M:%S}.profile')  # save profile file
 
             return ret_val
+
         return wrapper
+
     return profiler_dec
 
 
-@profiler(savefile=False)
+@profiler(save_file=False)
 def func1(arg1, arg2):
     """Example function"""
     return arg1, arg2
